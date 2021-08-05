@@ -1,0 +1,4 @@
+{"name": "Example monitor #1",
+"id": "example-monitor-1",
+"description": "This is the first example monitor.",
+"default_status": "up"}

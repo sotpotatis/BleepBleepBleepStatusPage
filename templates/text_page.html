@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- BleepBleepBleep Status text page
+This is basically just a page with a text used by BleepBleepBleepStatusPage
+for various purposes.
+ -->
+<head>
+    <meta charset="UTF-8">
+    <title>{{ personalization.website_title }}</title>
+    <!-- Responsive viewport tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Dependencies, here we go! -->
+    <!-- Tailwind -->
+    <link href="/static/css/tailwind.css" rel="stylesheet">
+    <!-- Iconify -->
+    <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.1/chart.min.js" integrity="sha512-5vwN8yor2fFT9pgPS9p9R7AszYaNn0LkQElTXIsZFCL7ucT8zDCAqlQXDdaqgA1mZP47hdvztBMsIoFxq/FyyQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body class="bg-gray-100 p-5 text-gray-400">
+<!-- Page header -->
+<div id="header" class="text-left items-left mb-3">
+    <div id="header-logo-and-title" class="cursor-pointer text-gray-400">
+        <p>
+            {% if header.logo.enabled == True %}
+                <!-- Logo -->
+                <img src="{{ header.logo.source_url }}" alt="{%  if personalization.language == "en" %}Status page logo{% endif %}{%  if personalization.language == "sv" %}Logotyp för statussida{% endif %}" class="{{ header.logo.classes_add }}" {% if header.logo.on_click_url not in [None, ""] %}onclick="location.href('{{ header.logo.on_click_url }}')"{% endif %}>
+            {% endif %}
+            <!-- Page title -->
+            <span class="text-xl font-bold" onclick="location.href='/'">{{ header.title }}</span>
+            <!-- Link to home -->
+            {%  if personalization.language == "en" %}
+                <a onclick="location.href='/'" class="pl-2 cursor-pointer hover:underline">Home</a>
+            {% endif %}
+            {%  if personalization.language == "sv" %}
+                <a onclick="location.href='/incidents'" class="pl-2 cursor-pointer hover:underline">Hem</a>
+            {% endif %}
+            <!-- Link to incidents -->
+            {%  if personalization.language == "en" %}
+                <a onclick="location.href='/incidents'" class="pl-2 cursor-pointer hover:underline">Incidents</a>
+            {% endif %}
+            {%  if personalization.language == "sv" %}
+                <a onclick="location.href='/incidents'" class="pl-2 cursor-pointer hover:underline">Incidenter</a>
+            {% endif %}
+            <!-- Buttons -->
+            <span id="header-buttons">
+        {% for icon in header.icons %}
+            <span class="iconify cursor-pointer" data-icon="{{ icon.icon_name }}" data-inline="true" {% if icon.on_click_url not in [None, ""] %}onclick="location.href='{{ icon.on_click_url }}'"{% endif %}></span>
+        {% endfor %}
+    </span>
+        </p>
+    </div>
+</div>
+<!-- End of page header -->
+<hr class="border-2 border-gray-300 pl-2 pr-2">
+<p class="text-lg font-bold">{{ text }}</p>
+{% if personalization.language == "en" %}
+<p class="text-gray-300"><a href="/">< Back to homepage</a></p>
+{% endif %}
+{% if personalization.language == "sv" %}
+    <p class="text-gray-300"><a href="/">< Tillbaka till startsida</a></p>
+{% endif %}
+<div id="footer">
+    {% if personalization.language == "en" %}
+    <p class="text-gray-400 text-sm">Proudly powered by ***StatusPage</p>
+    {% endif %}
+{% if personalization.language == "sv" %}
+    <p class="text-gray-400 text-sm">Drivs med stolthet av ***StatusPage</p>
+{% endif %}
+</div>
+</body>
+</html>

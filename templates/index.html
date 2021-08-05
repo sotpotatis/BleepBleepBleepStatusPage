@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- BleepBleepBleep Status Page Front page
+ This is the code for the main front page.
+ It is what people will see when they request your status page.
+ Everything you see here (hi developers inspecting the code <3) will be rendered backend.
+ For the win!
+
+ And hey, if any external developer that is not a part of the organization hosting this website is inspecting this code,
+ this status page runs on BleepBleepBleep status page code. BleepBleepBleep is a BleepBleepBleep-ingly exciting status page project
+ that gives you every BleepBleepBleep thing that you want to show on a status page. Kudos and celebrations!
+ -->
+{#
+Variable setting
+Comments only relevant from when reading this file from source, this will not be visible after render
+ #}
+{# Personalization data  #}
+{% set personalization = data.personalization %}
+{# Header data  #}
+{% set header = personalization.header %}
+<head>
+    <meta charset="UTF-8">
+    <title>{{ personalization.website_title }}</title>
+    <!-- Responsive viewport tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Dependencies, here we go! -->
+    <!-- Tailwind -->
+    <link href="/static/css/tailwind.css" rel="stylesheet">
+    <!-- Iconify -->
+    <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.1/chart.min.js" integrity="sha512-5vwN8yor2fFT9pgPS9p9R7AszYaNn0LkQElTXIsZFCL7ucT8zDCAqlQXDdaqgA1mZP47hdvztBMsIoFxq/FyyQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Tailwind extracted components -->
+</head>
+<!-- Get around some Jinja stuff when using together with JavaScript. -->
+<script>
+    /* Yeah this is a bit wonky but it works! And it allows for greater customization. */
+    var False = false
+    var True = true
+    var None = null
+</script>
+
+
+{# (end of variable setting) #}
+<body class="bg-gray-100 p-5 text-gray-400">
+<!-- Page header -->
+<div id="header" class="text-left items-left mb-3">
+    <div id="header-logo-and-title" class="cursor-pointer text-gray-400">
+        <p>
+            {% if header.logo.enabled == True %}
+                <!-- Logo -->
+                <img src="{{ header.logo.source_url }}" alt="{%  if personalization.language == "en" %}Status page logo{% endif %}{%  if personalization.language == "sv" %}Logotyp för statussida{% endif %}" class="{{ header.logo.classes_add }}" {% if header.logo.on_click_url not in [None, ""] %}onclick="location.href('{{ header.logo.on_click_url }}')"{% endif %}>
+            {% endif %}
+            <!-- Page title -->
+            <span class="text-xl font-bold" onclick="location.href='/'">{{ header.title }}</span>
+            <!-- Link to home -->
+            {%  if personalization.language == "en" %}
+                <a onclick="location.href='/'" class="pl-2 cursor-pointer hover:underline">Home</a>
+            {% endif %}
+            {%  if personalization.language == "sv" %}
+                <a onclick="location.href='/incidents'" class="pl-2 cursor-pointer hover:underline">Hem</a>
+            {% endif %}
+            <!-- Link to incidents -->
+            {%  if personalization.language == "en" %}
+                <a onclick="location.href='/incidents'" class="pl-2 cursor-pointer hover:underline">Incidents</a>
+            {% endif %}
+            {%  if personalization.language == "sv" %}
+                <a onclick="location.href='/incidents'" class="pl-2 cursor-pointer hover:underline">Incidenter</a>
+            {% endif %}
+            <!-- Buttons -->
+            <span id="header-buttons">
+        {% for icon in header.icons %}
+            <span class="iconify cursor-pointer" data-icon="{{ icon.icon_name }}" data-inline="true" {% if icon.on_click_url not in [None, ""] %}onclick="location.href='{{ icon.on_click_url }}'"{% endif %}></span>
+        {% endfor %}
+    </span>
+        </p>
+    </div>
+</div>
+<!-- End of page header -->
+<hr class="border-2 border-gray-300 pl-2 pr-2">
+{% if personalization.language == "en" %}
+<p class="text-lg font-bold">Status overview</p>
+{% endif %}
+{% if personalization.language == "sv" %}
+    <p class="text-lg font-bold">Översikt</p>
+{% endif %}
+<!-- Main status page -->
+{#  Parse current status and use it to create a color that represents the platform status #}
+{%  set parsed_platform_status = data.statuses[data.current_platform_status] %}
+{% set platform_status_color = parsed_platform_status.default_color + "-" + personalization.colors.base_value %}
+<div id="main-status" class="bg-white border-2 border-gray-300 ring-2 ring-{{ platform_status_color }} rounded-lg p-5 m-5 flex items-center text-center flex-col">
+    <!-- Icon -->
+    <p class="text-{{ platform_status_color }} text-7xl">
+        <span class="iconify" data-icon="{{ parsed_platform_status.icon }}" data-inline="false"></span>
+    </p>
+    <!-- Text -->
+    <p class="text-3xl font-bold text-{{ platform_status_color }}">{{ parsed_platform_status.readable.title }}</p>
+    <p class="text-lg">{{ parsed_platform_status.readable.for_platform.description }}</p>
+</div>
+<!-- Active incidents -->
+{% if personalization.language == "en" %}
+<p class="text-lg font-bold">Incidents</p>
+{% endif %}
+{% if personalization.language == "sv" %}
+    <p class="text-lg font-bold">Incidenter</p>
+{% endif %}
+<div id="active-incidents" class="text-left items-left">
+    {%  for incident in data.incidents %}
+        {% set incident_id_prefix = "open-incident-{{-" + incident.id %}
+        <div id="{{ incident_id_prefix }}" class="bg-white border-2 border-gray-300 text-gray-600 rounded-lg p-5 m-5">
+    <!-- Incident header -->
+    <div id="{{ incident_id_prefix }}-header">
+    <p class="text-lg font-bold">{{ incident.text.title }}</p>
+        <p class="text-gray-600">{{  incident.text.description }}</p>
+        <hr>
+    </div>
+    <!-- Status -->
+    <div id="{{ incident_id_prefix }}-status-overview" class="mt-3 mb-3">
+        {%  set parsed_affected_components = {} %}
+        {%  for affected_component in incident.affected %}
+            {%  if affected_component.status not in parsed_affected_components %}
+                {% do parsed_affected_components.update({affected_component.status: {"count": 0, "affecting": []}}) %}
+            {% endif %}
+            {%  do parsed_affected_components[affected_component.status].update({"count": parsed_affected_components[affected_component.status]["count"] + 1}) %}
+            {%  do parsed_affected_components[affected_component.status]["affecting"].append(affected_component.id) %}
+        {%  endfor %}
+    {%  for status, status_data in parsed_affected_components.items() %}
+        {%  set current_status_data = data.statuses[status] %}
+    <p class="font-bold text-lg text-{{ current_status_data.default_color }}-{{ personalization.colors.base_value }}">{{ current_status_data.readable.title }}</p>
+    {% if personalization.language == "en" %}
+        <p class="text-sm text-gray-400">affecting {{ status_data.count }} things</p>
+        {% endif %}
+        {% if personalization.language == "sv" %}
+            <p class="text-sm text-gray-400">påverkar {{ status_data.count }} saker</p>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <!-- Updates -->
+    <div id="{{ incident_id_prefix }}-updates" class="mt-3 mb-3">
+    <p class="text-gray-700 underlined font-bold"><span class="iconify" data-icon="bi:pin-angle-fill" data-inline="false"></span> Latest update</p>
+        {%  set latest_event = incident.events[incident.events|length - 1] %}
+    <p class="font-bold">{{ latest_event.title  }}</p>
+    <p>{{ latest_event.description  }}</p>
+        {%  if personalization.language == "en" %}
+    <p class="text-sm text-gray-400">posted at {{ latest_event.posted_at }} by {{ latest_event.posted_by }}.</p>
+        {%  endif %}
+        {%  if personalization.language == "sv" %}
+            <p class="text-sm text-gray-400">postad {{ latest_event.posted_at }} by {{ latest_event.posted_by }}.</p>
+        {%  endif %}
+        {%  if personalization.language == "en" %}
+            <a href="/incident/{{  incident.id }}" class="text-blue-400 text-underline focus:cursor-pointer">More information...</a>
+        {%  endif %}
+        {%  if personalization.language == "sv" %}
+            <a href="/incident/{{  incident.id }}" class="text-blue-400 text-underline focus:cursor-pointer">Mer information...</a>
+        {%  endif %}
+    </div>
+</div>
+    {% endfor %}
+</div>
+{%  if personalization.language == "en" %}
+<p class="text-lg font-bold">Individual statuses</p>
+{% endif %}
+{%  if personalization.language == "sv" %}
+    <p class="text-lg font-bold">Individuella statusar</p>
+{% endif %}
+<!-- Individual statuses -->
+<div id="individual-statuses-wrapper" class="text-left content-left">
+    {% for category_id in data.categories_and_monitors.categories %}
+<div id="individual-category-{{ category_id }}" class="bg-white border-2 border-gray-300 text-gray-600 rounded-lg p-2 m-5 mb-0">
+    {% set category_data = data["categories_and_monitors"]["categories"][category_id] %}
+    <p class="font-bold">{{ category_data.config.name }}</p>
+    <p>{{ category_data.config.description }}</p>
+</div>
+    {% for monitor in category_data.monitors %}
+    <!-- Subnodes -->
+    {% set monitor_id_prefix = "monitor-" + monitor.config.id %}
+    {% set current_status_information = data["statuses"][monitor.status] %}
+    {% set current_monitor_status_color = current_status_information.default_color + "-" + personalization.colors.base_value %}
+    <div id="{{ monitor_id_prefix }}" class="bg-white border-2 border-{{ current_monitor_status_color }} text-gray-600 rounded-lg p-2 m-5 mt-0 mb-0 ml-12">
+        <!-- Title -->
+        <div class="grid grid-cols-2">
+        <div id="{{ monitor_id_prefix }}-title">
+        <p class="font-semibold">{{ monitor.config.name }}</p>
+        <p class="text-gray-500">{{ monitor.config.description }}</p>
+        </div>
+        <!-- Status -->
+        <div id="{{ monitor_id_prefix }}-status">
+            <p class="text-{{ current_monitor_status_color }} font-bold">
+                {{ current_status_information.readable.title }}
+            </p>
+        </div>
+        </div>
+    </div>
+        {%  if monitor.plots|length > 0 %}
+    <hr class="text-gray-400">
+        {%  if personalization.language == "en" %}
+            <p class="text-gray-400 font-bold ml-12">Monitor statistics</p>
+            {% endif %}
+            {%  if personalization.language == "sv" %}
+                <p class="text-gray-400 font-bold ml-12">Statistik</p>
+            {% endif %}
+    {% for graph_plot in monitor.plots %}
+    {% set plot_id_prefix = "subnode-metrics-plot-" + graph_plot.ping_name %}
+    <div id="{{ plot_id_prefix }}" class="bg-white border-2 border-gray-300 text-gray-600 rounded-lg p-2 m-5 mt-0 mb-0 ml-24">
+        <!-- Title -->
+        <div class="grid grid-cols-2">
+            <div id="{{ plot_id_prefix }}-text">
+                {# (We can get the latest plot data like this since it's currently supported for the metric to contain only one dataaset) #}
+            {%  set last_datapoint = graph_plot.plot_data.datasets[0].data|last %}
+
+                <p class="font-semibold">{{ graph_plot.plot.plot_information.title }}{% if last_datapoint != None %} {# We, naturally, don't want to show None as a datapoint if it's the latest data #} <span class="bg-green-{{ personalization.colors.base_value }} text-white rounded pl-2 pt-1 pr-2 pb-1 text-sm">{{ last_datapoint }} {{ graph_plot.data_prefix }}</span>{% endif %}</p>
+                <p class="text-sm text-gray-500">{{ graph_plot.plot.plot_information.description }}</p>
+                {% if personalization.language == "en" %}
+                <p class="text-sm text-gray-400">last {{ graph_plot.plot.plot_information.plot_number_of_datapoints }} values</p>
+                {% endif %}
+                {% if personalization.language == "sv" %}
+                    <p class="text-sm text-gray-400">senaste {{ graph_plot.plot.plot_information.plot_number_of_datapoints }} värden</p>
+                {% endif %}
+            </div>
+            <!-- Graph plot. "wait this is inline JavaScript"? yes, indeed, but it is server-rendered? Yes. that's quite interesting, right? -->
+            <!-- The canvas -->
+            <div id="{{ plot_id_prefix }}-graph">
+                <canvas id="{{ plot_id_prefix }}-graph-canvas" width="{{ personalization.graphs.width }}" height="{{ personalization.graphs.height }}" class="bg-white">
+                {% if personalization.language == "en" %}
+                    <p>Your browser does not support the Canvas element.</p>
+                {% endif %}
+                {% if personalization.language == "sv" %}
+                        <p>Din webbläsare stödjer inte Canvas-elementet.</p>
+                {% endif %}
+                </canvas>
+            </div>
+            <script type="text/javascript">
+                /* The script that renders the graph datapoints for each monitor.
+                We are using Chart.js here. */
+                console.log("Adding chart for " + "{{ plot_id_prefix }}" + "...")
+                var ctx = document.getElementById("{{ plot_id_prefix }}-graph-canvas").getContext("2d") // Canvas context
+                // Chart.js object
+                var {{ plot_id_prefix|replace("-", "_") }}_chart = new Chart(ctx, {
+                    type: "{{ personalization.graphs.graph_type }}",
+                    data: {{ graph_plot.plot_data|safe }},
+                    options: {{ personalization.graphs.chart_js_options|safe }}
+                })
+                console.log("Chart for " + "{{ plot_id_prefix }}" + " added.")
+
+            </script>
+    </div>
+</div>
+    {% endfor %}
+        {%  endif %}
+    {% endfor %}
+</div>
+{% endfor %}
+<div id="footer">
+    {% if personalization.language == "en" %}
+    <p class="text-gray-400 text-sm">Proudly powered by ***StatusPage</p>
+    {% endif %}
+    {% if personalization.language == "sv" %}
+        <p class="text-gray-400 text-sm">Drivs med stolthet av ***StatusPage</p>
+    {% endif %}
+</div>
+</body>
+</html>

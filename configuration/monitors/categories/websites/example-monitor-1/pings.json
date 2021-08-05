@@ -1,0 +1,17 @@
+{"enabled":  true, "pings": [
+{
+"ping_name": "ping",
+  "data_prefix": "ms",
+"timeout_minutes": 1,
+  "reporting_frequency_minutes": 2,
+  "status_on_timeout": "down",
+  "plot": {
+    "plot_data": true,
+    "plot_information": {
+      "title": "Ping",
+      "description": "The ping that this monitor has to 8.8.8.8.",
+      "plot_number_of_datapoints": 30
+    }
+  }
+}
+]}

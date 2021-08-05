@@ -1,0 +1,8 @@
+{
+  "users": [
+    {
+      "id": "admin",
+      "token": "<SHA256-encrypted token>"
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "statuses": {
+    "up": {
+      "is_fully_available": true,
+      "is_expected": true,
+      "severity": 0,
+      "default_color": "green",
+      "icon": "bi-check-circle-fill",
+      "readable": {
+        "title": "Up",
+        "description": "The monitor is up and running. No errors have been logged nor detected.",
+        "for_platform": {
+          "description": "All services are running with no reported errors."
+        }
+      }
+    },
+    "down": {
+      "is_fully_available": false,
+      "is_expected": false,
+      "severity": 10,
+      "icon": "bi-x-circle-fill",
+      "default_color": "red",
+      "readable": {
+        "title": "Down",
+        "description": "The monitor is down and the services it serves might be temporarily offline or unavailable.",
+        "for_platform": {
+          "description": "Some monitors on our platform are currently down. We are working hard to fix this."
+        }
+      }
+    },
+    "partial_outage": {
+    "is_fully_available": false,
+      "icon": "bi-exclamation-circle-fill",
+      "is_expected": false,
+      "severity": 5,
+      "default_color": "yellow",
+    "readable": {
+      "title": "Partial outage",
+      "description": "The monitor is experiencing a partial outage. Some of the services it serves might be temporarily offline or unavailable.",
+      "for_platform": {
+        "description": "The platform is experiencing a partial outage. The availability of some services might be degraded."
+      }
+    }
+  },
+    "degraded_performance": {
+      "is_fully_available": false,
+      "is_expected": false,
+      "severity": 3,
+      "default_color": "yellow",
+      "icon": "bi-exclamation-circle-fill",
+      "readable": {
+        "title": "Degraded performance",
+        "description": "The monitor is experiencing degraded performance. Some of the services it serves might be temporarily unavailable or serve slower than expected.",
+        "for_platform": {
+          "description": "The platform is experiencing degraded performance. The availability of some services might be degraded."
+        }
+      }
+    },
+    "under_maintenance": {
+      "is_fully_available": false,
+      "is_expected": true,
+      "severity": 11,
+      "default_color": "blue",
+      "icon": "el-wrench-alt",
+      "readable": {
+        "title": "Under maintenance",
+        "description": "The monitor is under maintenance. Check for messages from our team about it. Services that it serves might be temporarily unavailable.",
+        "for_platform": {
+          "description": "The platform is currently under maintanence."
+        }
+      }
+    }
+  }
+}

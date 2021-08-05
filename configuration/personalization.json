@@ -1,0 +1,52 @@
+{
+  "colors": {
+    "base_value": "400"
+  },
+  "header": {
+    "title": "Example status page",
+    "logo": {
+      "enabled": true,
+      "source_url": "https://via.placeholder.com/300x50",
+      "classes_add": "",
+      "on_click_url": null
+    },
+    "icons": [{
+      "icon_name": "fluent:mail-48-filled",
+      "on_click_url": "mailto:hello@example.com"
+    }]
+  },
+  "graphs": {
+    "width": 400,
+    "height": 30,
+    "graph_type": "line",
+    "line_tension": 1,
+    "line_background_color": "#93C5FD",
+    "line_border_color": "#BFDBFE",
+    "fill_line": false,
+    "chart_js_options": {
+      "plugins": {
+        "legend": {
+          "display": false
+        }
+      },
+      "scales": {
+        "x": {
+          "ticks": {
+            "display": false
+          }
+        },
+        "y": {
+          "ticks": {
+            "display": false
+          }
+        }
+      }
+    }
+  },
+  "incidents": {
+    "incident_id_format": "incident-{number}",
+    "posted_by_name": "Admin"
+  },
+  "language": "en",
+  "website_title": "Status page"
+}
