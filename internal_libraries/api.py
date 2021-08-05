@@ -1408,7 +1408,7 @@ def delete_category_api(category_id):
         logger.info("Category ID does not exist. Returning error...")
         return generate_api_error("A category with this ID could not be found.", HTTPStatus.NOT_FOUND)
     logger.debug("Category exists. Getting directory path...")
-    category_path = data.subpath_str_to_path(f"monitors/categories/{category_id}", is_json_file=False)
+    category_path = data.subpath_str_to_path(f"monitors/categories/{category_id}", is_json_file=False, perform_existence_check=False)
     logger.debug(f"Category path: {category_path}. Deleting...")
     #Delete the category path using shutil.rmtree
     shutil.rmtree(category_path)
